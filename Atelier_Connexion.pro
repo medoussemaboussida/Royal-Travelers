@@ -34,20 +34,33 @@ CONFIG += c++11
 
 SOURCES += \
     chatboxdialog.cpp \
+    client.cpp \
     dialog.cpp \
     employee.cpp \
+    excel.cpp \
         main.cpp \
         mainwindow.cpp \
     connection.cpp \
+    qrcode.cpp \
+    qrcodegeneratedemo.cpp \
+    qrcodegenerateworker.cpp \
+    qrwidget.cpp \
+    stat_client.cpp \
     statistiques.cpp \
     widget.cpp
 
 HEADERS += \
     chatboxdialog.h \
+    client.h \
     dialog.h \
     employee.h \
+    excel.h \
         mainwindow.h \
     connection.h \
+    qrcode.h \
+    qrcodegenerateworker.h \
+    qrwidget.h \
+    stat_client.h \
     statistiques.h \
     widget.h
 

@@ -22,7 +22,7 @@ Statistiques::Statistiques(QWidget *parent) :
     ui(new Ui::Statistiques)
 {
     QBarSet *set=new QBarSet("Nombre des Employees");
-        *set<<E.Calcul("Employee")<<E.Calcul("Admin");
+        *set<<E.Calcul("employe")<<E.Calcul("admin");
         QBarSeries *series=new QBarSeries();
         series->append(set);
         QChart *chart=new QChart();

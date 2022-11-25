@@ -34,6 +34,30 @@ private slots:
     void on_pb_statistique_clicked();
 
     void on_pb_chat_clicked();
+    void on_groupBox_clicked();
+
+    void on_pushButton_ajouter_2_clicked();
+
+    void on_pushButton_modifier_2_clicked();
+
+    void on_pushButton_supprimer_2_clicked();
+
+    void on_pushButton_afficher_clicked();
+
+    void on_pushButton_chercher_clicked();
+
+    void on_pushButton_pdf_clicked();
+
+    void on_tableView_activated(const QModelIndex &index);
+
+    void on_pushButton_calcul_2_clicked();
+
+    void on_pushButton_excel_clicked();
+
+    void on_pushButton_qr_2_clicked();
+
+    void on_pushButton_stat_clicked();
+
 public slots :
     void openDialog();
 private:

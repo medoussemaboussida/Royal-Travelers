@@ -127,7 +127,7 @@ QSqlQueryModel* Employee::chercher_Employee(QString Re){
 int Employee::Calcul(QString C1)
 {
     QSqlQuery query;
-          query.prepare("SELECT * FROM EMPOLYE WHERE FUNCTION_E =:C1");
+          query.prepare("SELECT * FROM EMPOLYE WHERE FONCTION_E =:C1");
           query.bindValue(":C1",C1);
 
 

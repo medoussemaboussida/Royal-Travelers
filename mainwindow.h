@@ -4,6 +4,7 @@
 #include <QtSql>
 #include <QtDebug>
 #include <QFileInfo>
+#include "dialog.h"
 #include <dialog.h>
 #include "connection.h"
 #include "employee.h"

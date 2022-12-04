@@ -2,6 +2,7 @@
 #include "ui_dialog.h"
 #include "employee.h"
 #include "client.h"
+#include"mission.h"
 #include "statistiques.h"
 #include "widget.h"
 #include "excel.h"
@@ -42,6 +43,7 @@
 #include "qrcode.h"
 #include "qrwidget.h"
 #include "qrcodegenerateworker.h"
+#include"stat_mission.h"
 Dialog::Dialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Dialog)
@@ -56,6 +58,8 @@ Dialog::~Dialog()
     delete ui;
 }
 /*****************EMPLOYEE***********************************************/
+
+//ajouter
 void Dialog::on_pb_ajouter_clicked()
 {
     int CIN=ui->lineEdit_CIN->text().toInt();
@@ -77,8 +81,10 @@ void Dialog::on_pb_ajouter_clicked()
                 QMessageBox::critical(nullptr, QObject::tr("not ok"),
                             QObject::tr("ajout non effectué.\n"
                                         "Click Cancel to exit."), QMessageBox::Cancel);
+
 }
 
+//suppression
 void Dialog::on_pb_supprimer_clicked()
 {
     Employee E1; E1.setCIN(ui->lineEdit_Supp->text().toInt());
@@ -97,6 +103,7 @@ void Dialog::on_pb_supprimer_clicked()
                                    "Click Cancel to exit."), QMessageBox::Cancel);
 }
 
+//modifier
 void Dialog::on_pb_modifier_clicked()
 {
     int CIN=ui->lineEdit_CIN->text().toInt();
@@ -124,6 +131,7 @@ void Dialog::on_pb_modifier_clicked()
 
 }
 
+//tri
 void Dialog::on_pb_TrieNom_clicked()
 {
     ui->tab_employee->setModel(E.afficher_Employee_trie_Nom());
@@ -134,6 +142,7 @@ void Dialog::on_TriePrenom_clicked()
     ui->tab_employee->setModel(E.afficher_Employee_trie_prenom());
 }
 
+//chercher
 void Dialog::on_pb_chercher_clicked()
 {
     Employee E;
@@ -141,6 +150,7 @@ void Dialog::on_pb_chercher_clicked()
        ui->table_chercher->setModel(E.chercher_Employee(Re));
 }
 
+//pdf
 void Dialog::on_pb_export_clicked()
 {
     {
@@ -195,6 +205,7 @@ void Dialog::on_pb_export_clicked()
         }
 }
 
+//stat
 void Dialog::on_pb_statistique_clicked()
 {
     int Nawres;
@@ -213,12 +224,14 @@ void Dialog::openDialog()
         neww->show();
 }
 
+//chat
 void Dialog::on_pb_chat_clicked()
 {
     openDialog();
 }
 /***************************CLIENT********************************/
 
+//ajouter
 void Dialog::on_pushButton_ajouter_2_clicked()
 {
     int cin=ui->lineEdit_cin_2->text().toInt();
@@ -235,7 +248,7 @@ void Dialog::on_pushButton_ajouter_2_clicked()
 
 }
 
-
+//modifier
 
 void Dialog::on_pushButton_modifier_2_clicked()
 {
@@ -253,6 +266,7 @@ void Dialog::on_pushButton_modifier_2_clicked()
 
 }
 
+//suppression
 void Dialog::on_pushButton_supprimer_2_clicked()
 {
     client c;
@@ -268,6 +282,7 @@ void Dialog::on_groupBox_clicked()
 
 }
 
+//affichage
 void Dialog::on_pushButton_afficher_clicked()
 {
     client c;
@@ -287,7 +302,7 @@ void Dialog::on_pushButton_afficher_clicked()
 
    }
 }
-
+//chercher
 void Dialog::on_pushButton_chercher_clicked()
 {
     client c;
@@ -295,6 +310,7 @@ void Dialog::on_pushButton_chercher_clicked()
   ui->tableView->setModel(c.chercher_client(rech));
 }
 
+//pdf
 void Dialog::on_pushButton_pdf_clicked()
 {
     int cin=ui->lineEdit_cin_2->text().toInt();
@@ -343,7 +359,7 @@ void Dialog::on_pushButton_pdf_clicked()
 
              painter.end();
 }
-
+//activated
 void Dialog::on_tableView_activated(const QModelIndex &index)
 {
     QString val=ui->tableView->model()->data(index).toString();
@@ -371,7 +387,7 @@ void Dialog::on_tableView_activated(const QModelIndex &index)
                                                "Click Cancel to exit."), QMessageBox::Cancel);
             }
 }
-
+//calcul fidelite
 void Dialog::on_pushButton_calcul_2_clicked()
 {
     client c;
@@ -381,7 +397,7 @@ void Dialog::on_pushButton_calcul_2_clicked()
         ui->lineEdit_cinfidele_2->setText("");
         ui->tableView->setModel(c.afficher_client());
 }
-
+//excel
 void Dialog::on_pushButton_excel_clicked()
 {
     QString fileName = QFileDialog::getSaveFileName(this, tr("Excel file"), qApp->applicationDirPath (),
@@ -408,7 +424,7 @@ void Dialog::on_pushButton_excel_clicked()
                                    tr("Toutes les informations ont été enregistrée"));
       }
 }
-
+//qrcode
 void Dialog::on_pushButton_qr_2_clicked()
 {
     if(ui->tableView->currentIndex().row()==-1)
@@ -430,7 +446,7 @@ void Dialog::on_pushButton_qr_2_clicked()
                                 ui->label_19->setPixmap(pix);
                            }
 }
-
+//stat
 void Dialog::on_pushButton_stat_clicked()
 {
     int res;
@@ -441,4 +457,151 @@ void Dialog::on_pushButton_stat_clicked()
                qDebug() << res;
                if (res == QDialog::Rejected)
                  return;
+}
+
+//*************************************MISSION********************************************
+
+//ajouter
+void Dialog::on_pb_ajouter_2_clicked()
+{
+    int id=ui->le_id->text().toInt();
+        int log=ui->le_log->text().toInt();
+        int cin=ui->le_cin->text().toInt();
+       int tran=ui->le_tran->text().toInt();
+         QDate DATE_DEPART=ui->le_depart->date();
+         QDate DATE_RETOUR=ui->le_retour->date();
+         QString TYPE_MISSION=ui->le_type->text();
+        QString DIRECTION=ui->le_direction->text();
+
+        mission m(id,log,tran,cin,DATE_DEPART,DATE_RETOUR,TYPE_MISSION,DIRECTION);
+        m.ajouter_valid(ui->le_id->text().toInt());
+
+        m.ajouter_mission(m);
+
+}
+
+
+//modifier
+void Dialog::on_pb_update_clicked()
+{
+    int id=ui->le_id->text().toInt();
+        int log=ui->le_log->text().toInt();
+        int cin=ui->le_cin->text().toInt();
+       int tran=ui->le_tran->text().toInt();
+         QDate DATE_DEPART=ui->le_depart->date();
+         QDate DATE_RETOUR=ui->le_retour->date();
+         QString TYPE_MISSION=ui->le_type->text();
+        QString DIRECTION=ui->le_direction->text();
+
+        mission m(id,log,tran,cin,DATE_DEPART,DATE_RETOUR,TYPE_MISSION,DIRECTION);
+        m.modifier_mission(m);
+}
+
+
+//suppression
+void Dialog::on_pb_supprimer_2_clicked()
+{
+    mission m;
+        m.setID_Mission(ui->le_id->text().toInt());
+        m.supprimer_valid(ui->le_id->text().toInt());
+        m.supprimer_mission(m);
+    ui->le_id->setText("");
+
+}
+
+//affichage
+void Dialog::on_pushButton_aff_clicked()
+{
+    mission m;
+       //affichage simple
+       ui->tab_mission->setModel(m.afficher_mission());
+       if(QString::number(ui->comboBox_2->currentIndex())=="0"){
+        ui->tab_mission->setModel(m.afficher_mission_trie_direction());
+       }
+       //afficher selon le prenom
+       else if(QString::number(ui->comboBox_2->currentIndex())=="1"){
+           ui->tab_mission->setModel(m.afficher_mission_trie_type());
+       }
+}
+
+void Dialog::on_pushButton_rech_clicked()
+{
+    mission m;
+  QString rech =ui->le_recherche->text();
+  ui->tab_mission->setModel(m.chercher_mission(rech));
+}
+
+
+//stat
+void Dialog::on_le_stat_clicked()
+{
+    int res;
+               statistiquee w(this);
+               w.setWindowTitle("Statistiques des missions");
+
+               res = w.exec();
+               qDebug() << res;
+               if (res == QDialog::Rejected)
+                 return;
+}
+
+
+//pdf
+void Dialog::on_pushButton_2_clicked()
+{
+    QPdfWriter pdf("C:/Users/Hp/Desktop/missions.pdf");
+          QPainter painter(&pdf);
+         int i = 4000;
+              painter.setPen(Qt::green);
+              painter.setFont(QFont("Arial", 30));
+              painter.drawText(1100,1200,"Liste Des missions");
+              painter.setPen(Qt::red);
+              painter.setFont(QFont("Arial", 10));
+              painter.drawRect(100,100,7300,2600);
+              painter.drawRect(0,3000,9600,500);
+              painter.setFont(QFont("Arial", 9));
+              painter.drawText(200,3300,"ID_MISSION");
+              painter.drawText(1300,3300,"ID_LOG");
+              painter.drawText(2400,3300,"ID_TRAN");
+              painter.drawText(3500,3300,"CIN_C");
+                 painter.drawText(4500,3300,"DATE_DEPART");
+                    painter.drawText(6000,3300,"DATE_RETOUR");
+                    painter.drawText(8000,3300,"TYPE");
+                       painter.drawText(8500,3300,"DIRECTION");
+
+              QSqlQuery query;
+              query.prepare("select * from MISSION");
+              query.exec();
+              while (query.next())
+              {
+                  painter.drawText(200,i,query.value(0).toString());
+                  painter.drawText(1300,i,query.value(1).toString());
+                  painter.drawText(2400,i,query.value(2).toString());
+                  painter.drawText(3500,i,query.value(3).toString());
+                  painter.drawText(4500,i,query.value(4).toString());
+                  painter.drawText(6000,i,query.value(5).toString());
+                  painter.drawText(8000,i,query.value(6).toString());
+                  painter.drawText(9000,i,query.value(7).toString());
+
+
+
+                 i = i + 500;
+              }
+              QMessageBox::information(this, QObject::tr("PDF Enregistré"),
+                        QObject::tr("PDF Enregistré!.\n" "Click Cancel to exit."), QMessageBox::Cancel);
+
+
+         painter.end();
+}
+
+void Dialog::on_tab_mission_activated(const QModelIndex &index)
+{
+
+}
+
+//afficher historique
+void Dialog::on_pushButton_3_clicked()
+{
+    mission m;
+       ui->tab_historique->setModel(m.afficher_historique());
 }

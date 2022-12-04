@@ -10,7 +10,7 @@ QT       += core gui charts
 QT       += svg
 QT       += printsupport
 QT       += network
-
+QT       +=serialport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -33,6 +33,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+    arduino.cpp \
     chatboxdialog.cpp \
     client.cpp \
     dialog.cpp \
@@ -41,15 +42,18 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     connection.cpp \
+    mission.cpp \
     qrcode.cpp \
     qrcodegeneratedemo.cpp \
     qrcodegenerateworker.cpp \
     qrwidget.cpp \
     stat_client.cpp \
+    stat_mission.cpp \
     statistiques.cpp \
     widget.cpp
 
 HEADERS += \
+    arduino.h \
     chatboxdialog.h \
     client.h \
     dialog.h \
@@ -57,10 +61,12 @@ HEADERS += \
     excel.h \
         mainwindow.h \
     connection.h \
+    mission.h \
     qrcode.h \
     qrcodegenerateworker.h \
     qrwidget.h \
     stat_client.h \
+    stat_mission.h \
     statistiques.h \
     widget.h
 

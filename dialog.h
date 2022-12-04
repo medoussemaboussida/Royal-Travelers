@@ -58,6 +58,24 @@ private slots:
 
     void on_pushButton_stat_clicked();
 
+    void on_pb_ajouter_2_clicked();
+
+    void on_pb_update_clicked();
+
+    void on_pb_supprimer_2_clicked();
+
+    void on_pushButton_aff_clicked();
+
+    void on_pushButton_rech_clicked();
+
+    void on_le_stat_clicked();
+
+    void on_pushButton_2_clicked();
+
+    void on_tab_mission_activated(const QModelIndex &index);
+
+    void on_pushButton_3_clicked();
+
 public slots :
     void openDialog();
 private:

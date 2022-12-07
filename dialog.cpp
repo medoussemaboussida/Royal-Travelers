@@ -4,6 +4,7 @@
 #include "client.h"
 #include"mission.h"
 #include "statistiques.h"
+#include "statistique.h"
 #include "widget.h"
 #include "excel.h"
 #include"stat_client.h"
@@ -44,20 +45,84 @@
 #include "qrwidget.h"
 #include "qrcodegenerateworker.h"
 #include"stat_mission.h"
+#include<QTimer>
+#include<QDateTime>
+#include "transport.h"
+#include <limits>
+#include"logement.h"
+#include "stat_log.h"
+
 Dialog::Dialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Dialog)
 {
+    //controle de saisie EMPLOYE
     ui->setupUi(this);
     ui->lineEdit_CIN->setValidator(new QIntValidator(0, 99999999, this));
     ui->tab_employee->setModel(E.afficher());
+
+    //controle de saisie CLIENT
+    QRegularExpression QRegExp2("[a-zA-Z0-9]+@[a-zA-Z]+.[a-zA-Z]+");
+                  QRegularExpressionValidator *validator2 = new QRegularExpressionValidator(QRegExp2,this);
+                  ui->lineEdit_email_2->setValidator(validator2);
+                  ui->lineEdit_cin_2->setValidator(new QIntValidator(0,99999999,this));
+                  ui->lineEdit_phone_2->setValidator(new QIntValidator(0,99999999,this));
+                  ui->lineEdit_age_2->setValidator(new QIntValidator(0,100,this));
+                  ui->lineEdit_cinfidele_2->setValidator(new QIntValidator(0,99999999,this));
+
+    //contorle de saisie TRANSPORT
+
+
+
+    //controle de saisie MISSION
+
+                  ui->le_id->setValidator (new QIntValidator (0,999999,this));
+                        ui->le_log->setValidator(new QIntValidator (0,999999,this));
+                        ui->le_cin->setValidator(new QIntValidator (0,999999,this));
+                        ui->le_tran->setValidator(new QIntValidator (0,999999,this));
+                       ui->le_type->setValidator(new QRegExpValidator(  QRegExp("[A-z]*")  ));
+                        ui->le_direction->setValidator(new QRegExpValidator(  QRegExp("[A-z]*")  ));
+
+    //controle de saisie LOGEMENT
+
+    //qtimer
+    //ui->countdown->setText("1:00");
+       QTimer *timer=new QTimer(this);
+       connect(timer ,SIGNAL(timeout()),this,SLOT(showTime()));
+       timer->start();
+       QDateTime session=QDateTime::currentDateTime();
+       QString sessiontext=session.toString();
+       ui->session->setText(sessiontext);
+
+       //arduino gadour
+       arduino = new seriallink;
+
+           arduino->openConnection();
+
+           /*if(arduino->isWritable()){
+               arduino->write("G");
+               qDebug() << "message written";
+           }
+           QByteArray t = arduino->read();
+           qDebug() << t;*/
+
+           //connect(arduino, &seriallink::gotNewData, this, &MainWindow::updateGUI);
 }
 
 Dialog::~Dialog()
 {
     delete ui;
 }
-/*****************EMPLOYEE***********************************************/
+/*******timer*******/
+void Dialog::showTime()
+{
+    QTime time=QTime::currentTime();
+    QString time_text=time.toString("hh : mm : ss");
+    ui->Digital_clock->setText(time_text);
+
+
+}
+/****************************************EMPLOYEE***********************************************/
 
 //ajouter
 void Dialog::on_pb_ajouter_clicked()
@@ -75,6 +140,8 @@ void Dialog::on_pb_ajouter_clicked()
                 QMessageBox::information(nullptr, QObject::tr("ok"),
                             QObject::tr("ajout effectué.\n"
                                         "Click Cancel to exit."), QMessageBox::Cancel);
+                ui->tab_employee->setModel(E.afficher());
+
 
             }
             else
@@ -109,8 +176,8 @@ void Dialog::on_pb_modifier_clicked()
     int CIN=ui->lineEdit_CIN->text().toInt();
                QString Nom=ui->lineEdit_Nom->text();
                QString Prenom=ui->lineEdit_Prenom->text();
-               QString Email=ui->lineEdit_Email->text();
                QString Phone=ui->lineEdit_Phone->text();
+               QString Email=ui->lineEdit_Email->text();
                QString Function=ui->lineEdit_Function->text();
                QString Mdp=ui->lineEdit_Mdp->text();
 
@@ -123,32 +190,38 @@ void Dialog::on_pb_modifier_clicked()
                                                "Click Cancel to exit."), QMessageBox::Cancel);
 
             }
-            else{
+            else
                 QMessageBox::critical(nullptr, QObject::tr("sql query unsuccessful"),
                                    QObject::tr("row not updated and not saved.\n"
                                                "Click Cancel to exit."), QMessageBox::Cancel);
-            }
+
 
 }
 
-//tri
+
+//tri employe nom
 void Dialog::on_pb_TrieNom_clicked()
 {
     ui->tab_employee->setModel(E.afficher_Employee_trie_Nom());
 }
 
+
+
+//tri employe prenom
 void Dialog::on_TriePrenom_clicked()
 {
     ui->tab_employee->setModel(E.afficher_Employee_trie_prenom());
 }
 
-//chercher
+
+//chercher employe
 void Dialog::on_pb_chercher_clicked()
 {
     Employee E;
        QString Re =ui->lineEdit_chercher->text();
        ui->table_chercher->setModel(E.chercher_Employee(Re));
 }
+
 
 //pdf
 void Dialog::on_pb_export_clicked()
@@ -205,7 +278,8 @@ void Dialog::on_pb_export_clicked()
         }
 }
 
-//stat
+
+//stat employe
 void Dialog::on_pb_statistique_clicked()
 {
     int Nawres;
@@ -218,6 +292,7 @@ void Dialog::on_pb_statistique_clicked()
                      return;
 }
 
+//chat
 void Dialog::openDialog()
 {
       DuarteCorporation::widget *neww = new DuarteCorporation::widget();
@@ -231,7 +306,7 @@ void Dialog::on_pb_chat_clicked()
 }
 /***************************CLIENT********************************/
 
-//ajouter
+//ajouter client
 void Dialog::on_pushButton_ajouter_2_clicked()
 {
     int cin=ui->lineEdit_cin_2->text().toInt();
@@ -248,8 +323,8 @@ void Dialog::on_pushButton_ajouter_2_clicked()
 
 }
 
-//modifier
 
+//modifier client
 void Dialog::on_pushButton_modifier_2_clicked()
 {
     int cin=ui->lineEdit_cin_2->text().toInt();
@@ -277,12 +352,13 @@ void Dialog::on_pushButton_supprimer_2_clicked()
 
 }
 
+
 void Dialog::on_groupBox_clicked()
 {
 
 }
 
-//affichage
+//affichage client
 void Dialog::on_pushButton_afficher_clicked()
 {
     client c;
@@ -302,7 +378,9 @@ void Dialog::on_pushButton_afficher_clicked()
 
    }
 }
-//chercher
+
+
+//chercher client
 void Dialog::on_pushButton_chercher_clicked()
 {
     client c;
@@ -359,7 +437,9 @@ void Dialog::on_pushButton_pdf_clicked()
 
              painter.end();
 }
-//activated
+
+
+//tableview activated
 void Dialog::on_tableView_activated(const QModelIndex &index)
 {
     QString val=ui->tableView->model()->data(index).toString();
@@ -387,6 +467,8 @@ void Dialog::on_tableView_activated(const QModelIndex &index)
                                                "Click Cancel to exit."), QMessageBox::Cancel);
             }
 }
+
+
 //calcul fidelite
 void Dialog::on_pushButton_calcul_2_clicked()
 {
@@ -397,7 +479,9 @@ void Dialog::on_pushButton_calcul_2_clicked()
         ui->lineEdit_cinfidele_2->setText("");
         ui->tableView->setModel(c.afficher_client());
 }
-//excel
+
+
+//export excel client
 void Dialog::on_pushButton_excel_clicked()
 {
     QString fileName = QFileDialog::getSaveFileName(this, tr("Excel file"), qApp->applicationDirPath (),
@@ -424,7 +508,9 @@ void Dialog::on_pushButton_excel_clicked()
                                    tr("Toutes les informations ont été enregistrée"));
       }
 }
-//qrcode
+
+
+//qrcode client
 void Dialog::on_pushButton_qr_2_clicked()
 {
     if(ui->tableView->currentIndex().row()==-1)
@@ -446,7 +532,9 @@ void Dialog::on_pushButton_qr_2_clicked()
                                 ui->label_19->setPixmap(pix);
                            }
 }
-//stat
+
+
+//stat client
 void Dialog::on_pushButton_stat_clicked()
 {
     int res;
@@ -459,9 +547,11 @@ void Dialog::on_pushButton_stat_clicked()
                  return;
 }
 
+
+
 //*************************************MISSION********************************************
 
-//ajouter
+//ajouter mission
 void Dialog::on_pb_ajouter_2_clicked()
 {
     int id=ui->le_id->text().toInt();
@@ -481,7 +571,7 @@ void Dialog::on_pb_ajouter_2_clicked()
 }
 
 
-//modifier
+//modifier mission
 void Dialog::on_pb_update_clicked()
 {
     int id=ui->le_id->text().toInt();
@@ -498,7 +588,7 @@ void Dialog::on_pb_update_clicked()
 }
 
 
-//suppression
+//suppression mission
 void Dialog::on_pb_supprimer_2_clicked()
 {
     mission m;
@@ -509,7 +599,7 @@ void Dialog::on_pb_supprimer_2_clicked()
 
 }
 
-//affichage
+//affichage mission
 void Dialog::on_pushButton_aff_clicked()
 {
     mission m;
@@ -524,6 +614,8 @@ void Dialog::on_pushButton_aff_clicked()
        }
 }
 
+
+//recherche mission
 void Dialog::on_pushButton_rech_clicked()
 {
     mission m;
@@ -532,7 +624,7 @@ void Dialog::on_pushButton_rech_clicked()
 }
 
 
-//stat
+//stat mission
 void Dialog::on_le_stat_clicked()
 {
     int res;
@@ -599,9 +691,403 @@ void Dialog::on_tab_mission_activated(const QModelIndex &index)
 
 }
 
-//afficher historique
+//afficher historique mission
 void Dialog::on_pushButton_3_clicked()
 {
     mission m;
        ui->tab_historique->setModel(m.afficher_historique());
+}
+
+
+/***************************************TRANSPORT**********************************************************/
+
+//ajout transport
+void Dialog::on_pb_ajouter_3_clicked()
+{
+    int id_tran=ui->le_id_tran->text().toInt();
+       QString type=ui->le_type_2->text();
+       float prix=ui->le_prix->text().toFloat();
+       int nb_moy=ui->le_nb_moy->text().toInt();
+
+       Transport T(id_tran,type,prix,nb_moy);
+       bool test=T.ajouter();
+       if(test){
+           QMessageBox::information(nullptr, QObject::tr("ok"),
+                       QObject::tr("ajout effectué.\n"
+                                   "Click Cancel to exit."), QMessageBox::Cancel);
+           ui->tab_tran->setModel(T.afficher());
+       }
+       else
+           QMessageBox::critical(nullptr, QObject::tr("not ok"),
+                       QObject::tr("ajout non effectué.\n"
+                                   "Click Cancel to exit."), QMessageBox::Cancel);
+       QString textajouter;
+       QSqlQuery qry;
+       qry.prepare("select * from APPAREILS");
+       textajouter="L'ajout d'un site a la base de donnees de nom = "+QString(type)+" a ete effectue avec succees";
+}
+
+
+//get from tableview
+int Dialog::getselectedtran(){
+        int s=ui->tab_tran->selectionModel()->currentIndex().row();
+        QModelIndex index =ui->tab_tran->model()->index(s, 0,QModelIndex());
+        int aff=ui->tab_tran->model()->data(index).toString().toInt();
+        return aff;
+
+  }
+
+
+//suppression transport
+void Dialog::on_pb_supprimer_3_clicked()
+{
+Transport T;
+T.setid_tran(ui->le_id_tran->text().toInt());
+T.supprimer(T);
+ui->le_id_tran->setText("");
+
+}
+
+
+//modifier transport
+void Dialog::on_UpdateTran_clicked()
+{
+
+    int id_tran=ui->le_id_tran->text().toInt();
+       QString type=ui->le_type_2->text();
+       float prix=ui->le_prix->text().toFloat();
+       int nb_moy=ui->le_nb_moy->text().toInt();
+
+       Transport T(id_tran,type,prix,nb_moy);
+       T.ModifierTransport(T);
+       ui->tab_tran->setModel(T.afficher());
+}
+
+
+//chercher transport
+void Dialog::on_rec_textChanged(const QString &arg1)
+{
+    Transport T;
+      ui->tab_tran->setModel(T.rechercher(arg1));
+}
+
+
+
+//tri transport
+void Dialog::on_pushButton_01_clicked()
+{    Transport T;
+
+     ui->tab_tran->setModel(T.TriCASC());
+}
+
+//tri transport
+void Dialog::on_pushButton_02_clicked()
+{    Transport T;
+
+    ui->tab_tran->setModel(T.TriCDESC());
+}
+
+//tri transport
+void Dialog::on_pushButton_03_clicked()
+{    Transport T;
+
+    ui->tab_tran->setModel(T.TriDASC());
+}
+
+//tri transport
+void Dialog::on_pushButton_04_clicked()
+{    Transport T;
+
+    ui->tab_tran->setModel(T.TriDDESC());
+
+}
+
+//tri transport
+void Dialog::on_pushButton_05_clicked()
+{    Transport T;
+
+ ui->tab_tran->setModel(T.TriEASC());
+}
+
+//tri transport
+void Dialog::on_pushButton_06_clicked()
+{    Transport T;
+
+    ui->tab_tran->setModel(T.TriEDESC());
+
+}
+
+
+
+//pdf
+void Dialog::on_pb_print_clicked()
+{
+    int id_tran=ui->le_id_tran->text().toInt();
+    QString idtran_pdf=QString::number(id_tran);
+
+           QString type=ui->le_type_2->text();
+
+           int prix=ui->le_prix->text().toInt();
+           QString prix_pdf=QString::number(prix);
+
+           int nb_moy=ui->le_nb_moy->text().toInt();
+           QString moy_pdf=QString::number(nb_moy);
+
+        QPrinter printer;
+             printer.setOutputFormat(QPrinter::PdfFormat);
+             printer.setOutputFileName("transport.pdf");
+             QPainter painter;
+             painter.begin(&printer);
+             QFont font;
+
+             font.setPixelSize(40);
+             painter.setFont(font);
+             painter.setPen(Qt::red);
+             painter.drawText(250,150,"MOYEN DE TRANSPORT : ");
+             font.setPixelSize(20);
+             painter.setFont(font);
+             painter.setPen(Qt::red);
+             painter.drawText(100,300,"ID_TRAN: ");
+             painter.drawText(100,350,"TYPE: ");
+             painter.drawText(100,400,"PRIX:");
+             painter.drawText(100,450,"NB_MOY:");
+             painter.setFont(font);
+                  painter.setPen(Qt::black);
+                  painter.drawText(300,300,idtran_pdf);
+                  painter.drawText(300,350,type);
+                  painter.drawText(300,400,prix_pdf);
+                  painter.drawText(300,450,moy_pdf);
+
+
+    QDesktopServices::openUrl(QUrl("transport.pdf"));
+
+             painter.end();
+}
+
+
+
+//archiver transport
+void Dialog::on_Archiver_clicked()
+{
+    Transport T;
+    QMessageBox::StandardButton reply =QMessageBox::information(this,"Archiver la liste","Etes-vous sur?",QMessageBox::Yes|QMessageBox::No);
+
+           if(reply == QMessageBox::Yes){
+
+       int k=getselectedtran();
+       bool test=T.ArchiverTransport(k);
+       if(test){
+           QMessageBox::information(nullptr, QObject::tr("ok"),
+                       QObject::tr("Archivage effectué.\n"
+                                   "Click Cancel to exit."), QMessageBox::Cancel);
+           ui->tab_tran->setModel(T.afficher());
+       }
+       else
+           QMessageBox::critical(nullptr, QObject::tr("not ok"),
+                       QObject::tr("Archivage non effectué.\n"
+                                   "Click Cancel to exit."), QMessageBox::Cancel);
+   }
+}
+
+
+
+//afficher archive
+void Dialog::on_List_clicked()
+{
+    Transport T;
+    ui->tab_tran->setModel(T.listearchive());
+}
+
+
+
+
+//affichage normal
+void Dialog::on_List_2_clicked()
+{
+    Transport T;
+     ui->tab_tran->setModel(T.afficher());
+}
+
+
+//inarchiver transport
+void Dialog::on_Archiver_2_clicked()
+{
+    Transport T;
+    QMessageBox::StandardButton reply =QMessageBox::information(this,"Inarchiver la liste","Etes-vous sur?",QMessageBox::Yes|QMessageBox::No);
+
+            if(reply == QMessageBox::Yes){
+
+        int k=getselectedtran();
+        bool test=T.InarchiverTransport(k);
+        if(test){
+            QMessageBox::information(nullptr, QObject::tr("ok"),
+                        QObject::tr("Inarchivage effectué.\n"
+                                    "Click Cancel to exit."), QMessageBox::Cancel);
+            ui->tab_tran->setModel(T.afficher());
+        }
+        else
+            QMessageBox::critical(nullptr, QObject::tr("not ok"),
+                        QObject::tr("Inarchivage non effectué.\n"
+                                    "Click Cancel to exit."), QMessageBox::Cancel);
+    }
+}
+
+
+//stat transport
+void Dialog::on_Statistique_clicked()
+{
+    int res;
+              statistique w(this);
+               w.setWindowTitle("Statistiques transport");
+
+               res = w.exec();
+               qDebug() << res;
+               if (res == QDialog::Rejected)
+                 return;
+}
+
+//*********************************LOGEMENT*****************************************//
+
+//ajout
+void Dialog::on_pushButton_4_clicked()
+{
+    int id=ui->le_idlog->text().toInt();
+        QString  type=ui->le_type_3->text();
+        QString  duree=ui->le_duree->text();
+       QString  adresse=ui->le_adresse->text();
+       float prix=ui->le_prix_2->text().toFloat();
+       logement l(id,type,duree,adresse,prix);
+        l.ajouter_log(l);
+}
+
+//suppression
+void Dialog::on_pb_supprimer_4_clicked()
+{
+    logement l;
+        l.setID_LOG(ui->le_id_supp->text().toInt());
+        l.supprimer_log(l);
+    ui->le_id_supp->setText("");
+
+}
+
+//modifier
+void Dialog::on_pb_update_2_clicked()
+{
+    int id=ui->le_idlog->text().toInt();
+        QString  type=ui->le_type_3->text();
+        QString  duree=ui->le_duree->text();
+       QString  adresse=ui->le_adresse->text();
+       float prix=ui->le_prix_2->text().toFloat();
+       logement l(id,type,duree,adresse,prix);
+        l.modifier_log(l);
+}
+
+//affichage
+void Dialog::on_pushButton_afficherlog_clicked()
+{
+    logement l;
+  ui->tab_logement->setModel(l.afficher());
+  //tri selon prix
+  if(QString::number(ui->comboBox_3->currentIndex())=="0"){
+   ui->tab_logement->setModel(l.triPRIX());
+  }
+  //afficher selon le type
+  else if(QString::number(ui->comboBox_3->currentIndex())=="1"){
+      ui->tab_logement->setModel(l.triTYPE());
+  }
+  //afficher selon id
+  else if(QString::number(ui->comboBox_3->currentIndex())=="2"){
+      ui->tab_logement->setModel(l.triID());
+}
+}
+
+//chercher
+void Dialog::on_pushButton_cherch_clicked()
+{
+    logement l;
+  QString rech =ui->le_recherche_2->text();
+  ui->tab_logement->setModel(l.chercher_log(rech));
+}
+
+//pdf
+void Dialog::on_le_PDF_clicked()
+{
+    int id=ui->le_idlog->text().toInt();
+    QString id_pdf=QString::number(id);
+        QString  type=ui->le_type_3->text();
+        QString  duree=ui->le_duree->text();
+       QString  adresse=ui->le_adresse->text();
+       float prix=ui->le_prix_2->text().toFloat();
+       QString prix_pdf=QString::number(prix);
+    QPrinter printer;
+         printer.setOutputFormat(QPrinter::PdfFormat);
+         printer.setOutputFileName("logement.pdf");
+         QPainter painter;
+         painter.begin(&printer);
+         QFont font;
+
+         font.setPixelSize(40);
+         painter.setFont(font);
+         painter.setPen(Qt::red);
+         painter.drawText(250,150,"LOGEMENT : ");
+         font.setPixelSize(20);
+         painter.setFont(font);
+         painter.setPen(Qt::red);
+         painter.drawText(100,300,"ID_LOG: ");
+         painter.drawText(100,350,"TYPE: ");
+         painter.drawText(100,400,"DUREE:");
+         painter.drawText(100,450,"PRIX_LOG:");
+         painter.drawText(100,500,"LIEU:");
+
+         painter.setFont(font);
+              painter.setPen(Qt::black);
+              painter.drawText(300,300,id_pdf);
+              painter.drawText(300,350,type);
+              painter.drawText(300,400,duree);
+              painter.drawText(300,450,prix_pdf);
+              painter.drawText(300,500,adresse);
+
+
+
+QDesktopServices::openUrl(QUrl("logement.pdf"));
+
+         painter.end();
+}
+
+//stat
+void Dialog::on_le_stat_2_clicked()
+{
+    int res;
+              statistiqueee w(this);
+               w.setWindowTitle("Statistiques logement");
+
+               res = w.exec();
+               qDebug() << res;
+               if (res == QDialog::Rejected)
+                 return;
+}
+//arduino gadour
+
+void Dialog::on_Check_clicked()
+{
+      QSqlQuery q;
+    QString state = "";
+        QByteArray data = arduino->read();
+        float tmp = ui->temperature->text().toInt();
+        QString test = QString::fromStdString(arduino->read().toStdString());
+        qDebug() << arduino->read();
+        if(tmp > 21){
+            arduino->write("s");
+            state = "Danger";
+            QMessageBox::critical(nullptr, QObject::tr("Danger"),
+                        QObject::tr("Danger detecte\n"
+                                    "Click Cancel to exit."), QMessageBox::Cancel);
+        } else {
+            arduino->write("i");
+            state = "Ok";
+        }
+        q.prepare("INSERT INTO ARDUINO_TEMP (TEMPERATURE, ETAT) VALUES(:temp, :etat)");
+        q.bindValue(":temp", QString::number(tmp));
+        q.bindValue(":etat", state);
+        q.exec();
 }

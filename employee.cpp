@@ -25,11 +25,13 @@ void Employee::setEmail(QString Email){this->Email=Email;}
 void Employee::setPhone(QString Phone){this->Phone=Phone;}
 void Employee::setFunction(QString Function){this->Function=Function;}
 void Employee::setMdp(QString Mdp){this->Mdp=Mdp;}
+
+
 bool Employee::ajouter()
 {
                          QSqlQuery query;
                                       QString CIN_string = QString::number(CIN);
-                              query.prepare("INSERT INTO EMPOLYE (CIN_E,NOM_E,PRENOM_E,EMAIL_E,PHONE_E,FUNCTION_E,MDP) "
+                              query.prepare("INSERT INTO EMPOLYE (CIN_E,NOM_E,PRENOM_E,EMAIL_E,PHONE_E,FONCTION_E,MDP) "
                                             "VALUES (:CIN, :forNom, :forPrenom, :forEmail, :forPhone, :forFunction, :forMdp)");
                               query.bindValue(":CIN",CIN_string);
                               query.bindValue(":forNom", Nom);
@@ -48,14 +50,14 @@ bool Employee::modifier_Employee(){
            QString id_string=QString::number(CIN);
 
 
-          query.prepare(" UPDATE EMPOLYE SET CIN_E =:cin ,NOM_E = :nom, PRENOM_E = :prenom, EMAIL_E= :Email, PHONE_E= :Phone , FUNCTION_E= :Function ; MDP=Mdp WHERE  CIN_E = :cin");
+          query.prepare("UPDATE EMPOLYE SET NOM_E = :nom, PRENOM_E = :prenom, EMAIL_E= :Email, PHONE_E= :Phone , FONCTION_E= :Function ; MDP=:Mdp WHERE  CIN_E = :cin");
                               query.bindValue(":cin", id_string);
-                              query.bindValue(":forNom", Nom);
-                              query.bindValue(":forPrenom", Prenom);
-                              query.bindValue(":forEmail", Email);
-                              query.bindValue(":forPhone", Phone);
-                              query.bindValue(":forFunction", Function);
-                              query.bindValue(":forMdp", Mdp);
+                              query.bindValue(":nom", Nom);
+                              query.bindValue(":prenom", Prenom);
+                              query.bindValue(":Email", Email);
+                              query.bindValue(":Phone", Phone);
+                              query.bindValue(":Function", Function);
+                              query.bindValue(":Mdp", Mdp);
 
                              return query.exec();
 

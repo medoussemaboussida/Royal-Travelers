@@ -4,7 +4,7 @@
 #include "arduino.h"
 #include <QDebug>
 
-//*******Arduino declaration******
+
 int nb=0;
 int test=0;
 int pas=0;
@@ -104,7 +104,7 @@ void MainWindow::on_pushButton_2_clicked()
 
 }
 
-
+//**********************************ARDUINO RFID*****************************//
 void MainWindow::on_pushButton_3_clicked()
 {
     int ret=A.connect_arduino(); // lancer la connexion à arduino
@@ -128,18 +128,17 @@ void MainWindow::on_pushButton_3_clicked()
 
 }
 
+
 void MainWindow::update_nb()
 { QSqlQuery qry;
 
-qry.prepare ("SELECT ID_CARTE EMPOLYE WHERE ID_CARTE = '83 C1 9A 92' OR ID_CARTE = 'F3 6E 97 A7'" );
-qry.exec();
 A.read_from_arduino();
 
       qDebug()<<"Accepter";
 
 A.close_arduino();
-qry.prepare ("UPDATE EMPOLYE SET STATUS = 'ONLINE' WHERE ID_CARTE = '83 C1 9A 92' " );
-qry.exec();
+//qry.prepare ("UPDATE EMPOLYE SET STATUS = 'ONLINE' WHERE ID_CARTE = '83 C1 9A 92' " );
+//qry.exec();
       QMessageBox::critical(nullptr, QObject::tr("arduino"),
                   QObject::tr("login with card."), QMessageBox::Cancel);
 

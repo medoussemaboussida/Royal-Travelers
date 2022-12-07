@@ -34,11 +34,13 @@ CONFIG += c++11
 
 SOURCES += \
     arduino.cpp \
+    arduino_gadour.cpp \
     chatboxdialog.cpp \
     client.cpp \
     dialog.cpp \
     employee.cpp \
     excel.cpp \
+    logement.cpp \
         main.cpp \
         mainwindow.cpp \
     connection.cpp \
@@ -48,17 +50,22 @@ SOURCES += \
     qrcodegenerateworker.cpp \
     qrwidget.cpp \
     stat_client.cpp \
+    stat_log.cpp \
     stat_mission.cpp \
+    statistique.cpp \
     statistiques.cpp \
+    transport.cpp \
     widget.cpp
 
 HEADERS += \
     arduino.h \
+    arduino_gadour.h \
     chatboxdialog.h \
     client.h \
     dialog.h \
     employee.h \
     excel.h \
+    logement.h \
         mainwindow.h \
     connection.h \
     mission.h \
@@ -66,14 +73,18 @@ HEADERS += \
     qrcodegenerateworker.h \
     qrwidget.h \
     stat_client.h \
+    stat_log.h \
     stat_mission.h \
+    statistique.h \
     statistiques.h \
+    transport.h \
     widget.h
 
 FORMS += \
         chatboxdialog.ui \
         dialog.ui \
         mainwindow.ui \
+        statistique.ui \
         statistiques.ui \
         widget.ui
 
